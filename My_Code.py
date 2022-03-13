@@ -6,17 +6,21 @@ import pandas as pd
 import os
 import mlflow
 from math import sqrt
-import warnings
-import mlflow.pyfunc
-import sys
 
 diabetes = datasets.load_diabetes()
 diabetespd = pd.DataFrame(data=diabetes.data)
 diabetespd.to_csv('diabetes.txt', encoding='utf-8', index=False)
+diabetespd.head()
 diabetes_X = diabetes.data[:, np.newaxis, 2]
 diabetes_X[0:5]
-
 mlflow.sklearn.autolog()
+
+def mlflow_run(params, run_name="MyNotebookDiabates"):
+with mlflow.start_run(run_name=run_name) as run:
+    # get current run and experiment id
+    runID = run.info.run_uuid
+    experimentID = run.info.experiment_id
+
 with mlflow.start_run():
   # 1st idea
   #diabetes_X = diabetes.data[:, np.newaxis, 2]
@@ -49,18 +53,19 @@ with mlflow.start_run():
 
 
   mlflow.log_artifact("diabetes.txt")
+    
+  mlflow.log_metric("r2", r2_score(diabetes_y_test, diabetes_y_pred))
 
-def mlflow_run(params, run_name="Diabates"):
-  with mlflow.start_run(run_name=run_name) as run:
-    # get current run and experiment id
-    runID = run.info.run_uuid
-    experimentID = run.info.experiment_id
- return (experimentID, runID)
+  model.compile(optimizer='adam',
+                  loss='sparse_categorical_crossentropy',
+                  metrics=['accuracy'])
+
+  return (experimentID, runID)
 if __name__ == '__main__':
    # suppress any deprecated warnings
    warnings.filterwarnings("ignore", category=DeprecationWarning)
-
-parameters = [{'alpha': 0.1}]
-   (exp_id, run_id) = mlflow_run(params)
+alpha = int(sys.argv[0.1])
+ params = {'alpha': alpha}
+ (exp_id, run_id) = mlflow_run(params)
 
    print(f"Finished Experiment id={exp_id} and run id = {run_id}")
