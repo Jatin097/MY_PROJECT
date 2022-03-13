@@ -64,6 +64,7 @@ with mlflow.start_run():
 if __name__ == '__main__':
    # suppress any deprecated warnings
    warnings.filterwarnings("ignore", category=DeprecationWarning)
+     params = {'param': param}
 
  (exp_id, run_id) = mlflow_run(params)
 
