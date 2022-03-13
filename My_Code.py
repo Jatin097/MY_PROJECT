@@ -64,8 +64,7 @@ with mlflow.start_run():
 if __name__ == '__main__':
    # suppress any deprecated warnings
    warnings.filterwarnings("ignore", category=DeprecationWarning)
-alpha = int(sys.argv[0.1])
- params = {'alpha': alpha}
+
  (exp_id, run_id) = mlflow_run(params)
 
    print(f"Finished Experiment id={exp_id} and run id = {run_id}")
